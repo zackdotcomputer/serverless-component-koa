@@ -1,0 +1,13 @@
+app: koa-starter-ts
+component: koa
+name: koa-starter-ts
+description: Deploys a serverless koa api on top of AWS Lambda
+keywords: aws, serverless, faas, lambda, koa, typescript
+repo: https://github.com/zackdotcomputer/serverless-components-koa
+license: Apache
+
+inputs:
+  src:
+    src: ./
+    hook: npm run build
+    dist: build
