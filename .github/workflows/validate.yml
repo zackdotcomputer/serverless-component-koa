@@ -50,15 +50,15 @@ jobs:
           restore-keys: |
             src/node-modules-v14-${{ runner.os }}-${{ github.ref }}-
             src/node-modules-v14-${{ runner.os }}-refs/heads/master-
-      - name: Retrieve src/_express/node_modules from cache
-        id: cacheSrcExpressNodeModules
+      - name: Retrieve src/_koa/node_modules from cache
+        id: cacheSrcKoaNodeModules
         uses: actions/cache@v1
         with:
-          path: src/_express/node_modules
-          key: src/_express/node-modules-v14-${{ runner.os }}-${{ github.ref }}-${{ hashFiles('src/_express/package*.json') }}
+          path: src/_koa/node_modules
+          key: src/_koa/node-modules-v14-${{ runner.os }}-${{ github.ref }}-${{ hashFiles('src/_koa/package*.json') }}
           restore-keys: |
-            src/_express/node-modules-v14-${{ runner.os }}-${{ github.ref }}-
-            src/_express/node-modules-v14-${{ runner.os }}-refs/heads/master-
+            src/_koa/node-modules-v14-${{ runner.os }}-${{ github.ref }}-
+            src/_koa/node-modules-v14-${{ runner.os }}-refs/heads/master-
       - name: Retrieve src/_src/node_modules from cache
         id: cacheSrcSrcNodeModules
         uses: actions/cache@v1
@@ -91,10 +91,10 @@ jobs:
         run: |
           cd src
           npm ci
-      - name: Install src/_express dependencies
-        if: steps.cacheSrcExpressNodeModules.outputs.cache-hit != 'true'
+      - name: Install src/_koa dependencies
+        if: steps.cacheSrcKoaNodeModules.outputs.cache-hit != 'true'
         run: |
-          cd src/_express
+          cd src/_koa
           npm ci
       - name: Install src/_src dependencies
         if: steps.cacheSrcSrcNodeModules.outputs.cache-hit != 'true'

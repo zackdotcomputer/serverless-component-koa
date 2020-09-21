@@ -28,12 +28,12 @@ exports.handler = async (event, context) => {
       // eslint-disable-next-line import/no-unresolved
       app = require('../app.js');
     } catch (e) {
-      if (e.message.includes("Cannot find module 'express'")) {
+      if (e.message.includes("Cannot find module 'koa'")) {
         // user probably did not run "npm i". return a helpful message.
         return {
           statusCode: 404,
           body:
-            'The "express" dependency was not found. Did you install "express" as a dependency within your source folder via npm?',
+            'The "koa" dependency was not found. Did you install "koa" as a dependency within your source folder via npm?',
         };
       }
       // some other require error
@@ -47,16 +47,19 @@ exports.handler = async (event, context) => {
     app = require('../_src/app.js');
   }
 
-  if (typeof app !== 'function') {
+  const callback = app && app.callback ? app.callback() : undefined;
+
+  if (typeof callback !== 'function') {
     // make sure user exported app in app.js or return a helpful message.
     return {
       statusCode: 404,
       body:
-        'Express app not found. Please make sure you are exporting express from an "app.js" file.',
+        'Koa app not found. Please make sure you are exporting your Koa object from a file named "app.js"',
     };
   }
 
-  const server = awsServerlessExpress.createServer(app);
+  // Nice hack - the koa.callback() result has the same signature as an Express app!
+  const server = awsServerlessExpress.createServer(callback);
   const res = await awsServerlessExpress.proxy(server, event, context, 'PROMISE');
   return res.promise;
 };

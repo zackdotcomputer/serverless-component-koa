@@ -29,7 +29,7 @@ const npmInstall = (packagePath) =>
     });
   });
 
-const packagesPaths = ['src', 'src/_express', 'src/_src', 'test/src'];
+const packagesPaths = ['src', 'src/_koa', 'src/_src', 'test/src'];
 
 (async () => {
   // Running multiple "npm install" prcesses in parallel is not confirmed to be safe.

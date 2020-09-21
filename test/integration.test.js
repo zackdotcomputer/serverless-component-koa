@@ -9,10 +9,10 @@ jest.setTimeout(60000);
 
 // the yaml file we're testing against
 const instanceYaml = {
-  org: 'serverlessinc',
+  org: 'zackdotcomputer',
   app: 'component-tests',
-  component: 'express@dev',
-  name: 'express-integration-tests',
+  component: 'koa@dev',
+  name: 'koa-integration-tests',
   stage: 'dev',
   inputs: {}, // should deploy with zero inputs
 };
@@ -32,7 +32,7 @@ afterAll(async () => {
   await sdk.remove(instanceYaml, credentials);
 });
 
-it('should successfully deploy express app', async () => {
+it('should successfully deploy koa app', async () => {
   const instance = await sdk.deploy(instanceYaml, credentials);
 
   // store the inital state for removal validation later on
@@ -44,7 +44,7 @@ it('should successfully deploy express app', async () => {
 it('should successfully update basic configuration', async () => {
   instanceYaml.inputs.memory = 3008;
   instanceYaml.inputs.timeout = 30;
-  instanceYaml.inputs.env = { DEBUG: 'express:*' };
+  instanceYaml.inputs.env = { DEBUG: 'koa:*' };
 
   const instance = await sdk.deploy(instanceYaml, credentials);
 
@@ -156,7 +156,7 @@ it('should disable traffic shifting', async () => {
   await get();
 });
 
-it('should successfully remove express app', async () => {
+it('should successfully remove koa app', async () => {
   await sdk.remove(instanceYaml, credentials);
 
   // make sure lambda was actually removed

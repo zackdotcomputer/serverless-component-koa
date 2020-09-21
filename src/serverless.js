@@ -5,7 +5,7 @@ const { Component } = require('@serverless/core');
 const {
   generateId,
   getClients,
-  packageExpress,
+  packageKoa,
   createOrUpdateFunctionRole,
   createOrUpdateMetaRole,
   createOrUpdateLambda,
@@ -19,7 +19,7 @@ const {
   getMetrics,
 } = require('./utils');
 
-class Express extends Component {
+class Koa extends Component {
   /**
    * Deploy
    * @param {object} inputs
@@ -34,7 +34,7 @@ class Express extends Component {
       throw new Error(msg);
     }
 
-    console.log('Deploying Express App...');
+    console.log('Deploying Koa App...');
 
     // Throw error on domain change
     if (inputs.domain && this.state.domain && this.state.domain !== inputs.domain) {
@@ -54,7 +54,7 @@ class Express extends Component {
 
     const clients = getClients(this.credentials.aws, inputs.region);
 
-    await packageExpress(this, inputs, outputs);
+    await packageKoa(this, inputs, outputs);
 
     await Promise.all([
       createOrUpdateFunctionRole(this, inputs, clients),
@@ -130,4 +130,4 @@ class Express extends Component {
   }
 }
 
-module.exports = Express;
+module.exports = Koa;

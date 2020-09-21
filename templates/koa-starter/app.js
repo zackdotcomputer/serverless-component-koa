@@ -1,8 +1,9 @@
 'use strict';
 
-const koa = require('koa');
+// eslint-disable-next-line import/no-unresolved
+const Koa = require('koa');
 
-const app = koa();
+const app = new Koa();
 
 // Routes
 app.use(async (ctx) => {

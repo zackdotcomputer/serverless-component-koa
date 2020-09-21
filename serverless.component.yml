@@ -1,21 +1,21 @@
-name: express
-version: 1.7.1
-author: eahefnawy
-org: serverlessinc
-description: Deploys a serverless Express.js application onto AWS Lambda and AWS HTTP API.
-keywords: aws, serverless, express
-repo: https://github.com/serverless-components/express
-license: MIT
+name: koa
+version: 1.0.0
+author: zackdotcomputer
+org: zackdotcomputer
+description: Deploys a serverless Koa.js application onto AWS Lambda and AWS HTTP API.
+keywords: aws, serverless, koa, koajs
+repo: https://github.com/zackdotcomputer/serverless-component-koa
+license: Apache
 main: ./src
 
 actions:
   # deploy
   deploy:
-    description: Deploy your Express.js application to AWS Lambda, AWS HTTP API and more.
+    description: Deploy your Koa.js application to AWS Lambda, AWS HTTP API and more.
     inputs:
       src:
         type: src
-        description: The folder containing the source code of your Express.js application.
+        description: The folder containing the source code of your Koa.js application. Either the src or, if present, the dist must include a file named app.js which exports a Koa application as its default module export.
 
       memory:
         type: number
@@ -86,7 +86,7 @@ actions:
 
       domain:
         type: string
-        description: A custom domain that will be automatically set up for your Express.js API.
+        description: A custom domain that will be automatically set up for your Koa.js app.
 
       roleName:
         type: string
@@ -112,9 +112,9 @@ actions:
   # remove
 
   remove:
-    description: Removes your Express.js application from AWS Lambda, AWS HTTP API and more
+    description: Removes your Koa.js application from AWS Lambda, AWS HTTP API and more
 
   # metrics
 
   metrics:
-    description: Fetch metrics from your Express.js API
+    description: Fetch metrics from your Koa.js API

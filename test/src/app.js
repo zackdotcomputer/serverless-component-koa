@@ -1,15 +1,15 @@
 'use strict';
 
-const express = require('express');
+const koa = require('koa');
 
-const app = express();
+const app = koa();
 
-app.get('/cookie', (req, res) => {
-  res.send(`${req.headers.cookie}`);
-});
-
-app.get('/*', (req, res) => {
-  res.send('hello world');
+app.use(async (ctx) => {
+  if (ctx.path === '/cookie') {
+    ctx.body = `${ctx.request.headers.cookie}`;
+  } else {
+    ctx.body = 'hello world';
+  }
 });
 
 module.exports = app;

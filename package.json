@@ -1,7 +1,7 @@
 {
-  "name": "@serverless-components/express",
+  "name": "serverless-components-koa",
   "private": true,
-  "author": "Serverless, Inc.",
+  "author": "Zack Sheppard",
   "license": "Apache",
   "scripts": {
     "lint": "eslint --ignore-path .gitignore .",
@@ -18,7 +18,7 @@
   "devDependencies": {
     "@serverless/components": "^2.31.6",
     "@serverless/eslint-config": "^2.1.1",
-    "@serverless/platform-client": "^0.24.0",
+    "@serverless/platform-client": "^0.24.`0",
     "aws-sdk": "^2.704.0",
     "axios": "^0.19.2",
     "dotenv": "^8.2.0",

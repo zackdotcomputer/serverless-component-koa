@@ -27,7 +27,7 @@ const generateId = () => Math.random().toString(36).substring(6);
  * @param {*} instance
  */
 const getDefaultDescription = (instance) => {
-  return `A resource of the Serverless Express Component for ${instance.org} - ${instance.stage} - ${instance.app} - ${instance.name}`;
+  return `A resource of the Serverless Koa Component for ${instance.org} - ${instance.stage} - ${instance.app} - ${instance.name}`;
 };
 
 /**
@@ -89,13 +89,13 @@ const getNakedDomain = (domain) => {
 };
 
 /*
- * Packages express app and injects shims and sdk
+ * Packages Koa app and injects shims and sdk
  *
  * @param ${instance} instance - the component instance
  * @param ${object} config - the component config
  */
-const packageExpress = async (instance, inputs) => {
-  console.log('Packaging Express.js application...');
+const packageKoa = async (instance, inputs) => {
+  console.log('Packaging Koa.js application...');
 
   // unzip source zip file
   console.log(`Unzipping ${inputs.src || 'files'}...`);
@@ -103,8 +103,8 @@ const packageExpress = async (instance, inputs) => {
   console.log(`Files unzipped into ${sourceDirectory}...`);
 
   // add shim to the source directory
-  console.log('Installing Express + AWS Lambda handler...');
-  copySync(path.join(__dirname, '_express'), path.join(sourceDirectory, '_express'));
+  console.log('Installing Koa + AWS Lambda handler...');
+  copySync(path.join(__dirname, '_koa'), path.join(sourceDirectory, '_koa'));
 
   /**
    * DEPRECATED: This runs untrusted code and should not be used until we can find a way to do this more securely.
@@ -117,11 +117,11 @@ const packageExpress = async (instance, inputs) => {
 
   // add sdk to the source directory, add original handler
   console.log('Installing Serverless Framework SDK...');
-  instance.state.handler = await instance.addSDK(sourceDirectory, '_express/handler.handler');
+  instance.state.handler = await instance.addSDK(sourceDirectory, '_koa/handler.handler');
 
   if (!inputs.src) {
-    // add default express app
-    console.log('Installing Default Express App...');
+    // add default Koa app
+    console.log('Installing Default Koa App...');
     copySync(path.join(__dirname, '_src'), path.join(sourceDirectory, '_src'));
   }
   // zip the source directory with the shim and the sdk
@@ -135,108 +135,6 @@ const packageExpress = async (instance, inputs) => {
 
   return zipPath;
 };
-
-/*
- * DEPRECATED: This runs untrusted code and should not be used until we can find a way to do this more securely.
- *
- * Infer data from the Application by attempting to intiatlize it during deployment and extracting data.
- *
- * @param ${object} instance - the component instance
- * @param ${object} inputs - the component inputs
- */
-// const infer = async (instance, inputs, outputs, sourceDirectory) => {
-//   // Initialize application
-//   let app;
-//   try {
-//     // Load app
-//     app = require(path.join(sourceDirectory, './app.js'));
-//   } catch (error) {
-//     const msg = error.message;
-//     error.message = `OpenAPI auto-generation failed due to the Express Component not being able to start your app. To fix this, you can turn this feature off by specifying 'inputs.openApi: false' or fix the following issue: ${msg}`;
-//     throw error;
-//   }
-
-//   try {
-//     await generateOpenAPI(instance, inputs, outputs, app);
-//   } catch (error) {
-//     const msg = error.message;
-//     error.message = `OpenAPI auto-generation failed due to the Express Component not being able to start your app.  To fix this, you can turn this feature off by specifying 'inputs.openApi: false' or fix the following issue: ${msg}`;
-//     throw error;
-//   }
-// };
-
-/*
- * DEPRECATED: This runs untrusted code and should not be used until we can find a way to do this more securely.
- *
- * Generate an OpenAPI specification from the Application
- *
- * @param ${object} instance - the component instance
- * @param ${object} inputs - the component inputs
- */
-// const generateOpenAPI = async (instance, inputs, outputs, app) => {
-//   // Open API Version 3.0.3, found here: https://swagger.io/specification/
-//   // TODO: This is not complete, but the pieces that do exist are accurate.
-//   const openApi = {
-//     openapi: '3.0.3',
-//     info: {
-//       // title: null,
-//       // description: null,
-//       version: '0.0.1',
-//     },
-//     paths: {},
-//   };
-
-//   // Parts of the OpenAPI spec that we may use these at a later date.
-//   // For now, they are unincorporated.
-//   // const oaServersObject = {
-//   //   url: null,
-//   //   description: null,
-//   //   variables: {},
-//   // };
-//   // const oaComponentsObject = {
-//   //   schemas: {},
-//   //   responses: {},
-//   //   parameters: {},
-//   //   examples: {},
-//   //   requestBodies: {},
-//   //   headers: {},
-//   //   securitySchemes: {},
-//   //   links: {},
-//   //   callbacks: {},
-//   // };
-//   // const oaPathItem = {
-//   //   description: null,
-//   //   summary: null,
-//   //   operationId: null,
-//   //   responses: {},
-//   // };
-
-//   if (app && app._router && app._router.stack && app._router.stack.length) {
-//     app._router.stack.forEach((route) => {
-//       // This array holds all middleware layers, which include routes and more
-//       // First check if this 'layer' is an express route type, otherwise skip
-//       if (!route.route) return;
-
-//       // Define key data
-//       const ePath = route.route.path;
-
-//       if (['*', '/*'].indexOf(ePath) > -1) {
-//         return;
-//       }
-
-//       // Save path
-//       openApi.paths[ePath] = openApi.paths[ePath] || {};
-
-//       for (const method of Object.keys(route.route.methods)) {
-//         // Save method
-//         openApi.paths[ePath][method] = {};
-//       }
-//     });
-//   }
-
-//   // Save to outputs
-//   outputs.api = openApi;
-// };
 
 /*
  * Fetches a lambda function by ARN
@@ -327,11 +225,11 @@ const createLambda = async (instance, inputs, clients, retries = 0) => {
         // Throw different errors, depending on whether the user is using a custom role
         if (instance.state.userRoleArn) {
           throw new Error(
-            'Unable to create the AWS Lambda function which your Express.js app runs on.  The reason is "the role defined for the function cannot be assumed by Lambda".  This might be due to a missing or invalid "Trust Relationship" within the policy of the custom IAM Role you you are attempting to use.  Try modifying that.  If that doesn\'t work, this is an issue with AWS Lambda\'s APIs.  We suggest trying to remove this instance by running "serverless remove" then redeploying to get around this.'
+            'Unable to create the AWS Lambda function which your Koa.js app runs on.  The reason is "the role defined for the function cannot be assumed by Lambda".  This might be due to a missing or invalid "Trust Relationship" within the policy of the custom IAM Role you you are attempting to use.  Try modifying that.  If that doesn\'t work, this is an issue with AWS Lambda\'s APIs.  We suggest trying to remove this instance by running "serverless remove" then redeploying to get around this.'
           );
         } else {
           throw new Error(
-            'Unable to create the AWS Lambda function which your Express.js app runs on.  The reason is "the role defined for the function cannot be assumed by Lambda".  This is an issue with AWS Lambda\'s APIs.  We suggest trying to remove this instance by running "serverless remove" then redeploying to get around this.  This seems to be the only way users have gotten past this.'
+            'Unable to create the AWS Lambda function which your Koa.js app runs on.  The reason is "the role defined for the function cannot be assumed by Lambda".  This is an issue with AWS Lambda\'s APIs.  We suggest trying to remove this instance by running "serverless remove" then redeploying to get around this.  This seems to be the only way users have gotten past this.'
           );
         }
       }
@@ -351,7 +249,7 @@ const createLambda = async (instance, inputs, clients, retries = 0) => {
           'Attempted to retry Lambda creation 5 times, but the KMS error persists  Aborting...'
         );
         throw new Error(
-          'Unable to create the AWS Lambda function which your Express.js app runs on.  The reason is "Lambda was unable to configure access to your environment variables because the KMS key is invalid".  This is a known issue with AWS Lambda\'s APIs, and there is nothing the Serverless Framework can do to help with it at this time.  We suggest trying to remove this instance by running "serverless remove" then redeploying to attempt to get around this.'
+          'Unable to create the AWS Lambda function which your Koa.js app runs on.  The reason is "Lambda was unable to configure access to your environment variables because the KMS key is invalid".  This is a known issue with AWS Lambda\'s APIs, and there is nothing the Serverless Framework can do to help with it at this time.  We suggest trying to remove this instance by running "serverless remove" then redeploying to attempt to get around this.'
         );
       }
       // Retry.
@@ -1198,7 +1096,7 @@ const removeDomain = async (instance, clients) => {
  */
 const getMetrics = async (region, metaRoleArn, apiId, functionName, rangeStart, rangeEnd) => {
   /**
-   * Create AWS STS Token via the meta role that is deployed with the Express Component
+   * Create AWS STS Token via the meta role that is deployed with the Koa Component
    */
 
   // Assume Role
@@ -1365,7 +1263,7 @@ module.exports = {
   generateId,
   sleep,
   getClients,
-  packageExpress,
+  packageKoa,
   createOrUpdateFunctionRole,
   createOrUpdateMetaRole,
   createOrUpdateLambda,
